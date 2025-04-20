@@ -289,25 +289,54 @@ try {
 /* Dark & Light Mode */
 /*********************/
 try {
-    function changeTheme(e){
-        e.preventDefault()
-        const htmlTag = document.getElementsByTagName("html")[0]
+    function changeTheme(e) {
+        e.preventDefault();
+        const htmlTag = document.getElementsByTagName("html")[0];
+        const isDark = htmlTag.className.includes("dark");
         
-        if (htmlTag.className.includes("dark")) {
-            htmlTag.className = 'light'
+        // Toggle theme with transition
+        if (isDark) {
+            htmlTag.className = 'light scroll-smooth';
+            localStorage.setItem('theme', 'light');
         } else {
-            htmlTag.className = 'dark'
+            htmlTag.className = 'dark scroll-smooth';
+            localStorage.setItem('theme', 'dark');
+        }
+
+        // Animate the ball movement
+        const ball = document.querySelector('.ball');
+        if (ball) {
+            if (isDark) {
+                ball.style.transform = 'translateX(0)';
+            } else {
+                ball.style.transform = 'translateX(-24px)';
+            }
         }
     }
 
-    const switcher = document.getElementById("theme-mode")
-    switcher?.addEventListener("click" ,changeTheme )
+    // Initialize theme from localStorage
+    function initializeTheme() {
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        const htmlTag = document.getElementsByTagName("html")[0];
+        const ball = document.querySelector('.ball');
+        
+        htmlTag.className = `${savedTheme} scroll-smooth`;
+        if (ball) {
+            ball.style.transform = savedTheme === 'dark' ? 'translateX(-24px)' : 'translateX(0)';
+        }
+    }
+
+    // Add event listeners
+    const switcher = document.getElementById("theme-mode");
+    switcher?.addEventListener("click", changeTheme);
     
     const chk = document.getElementById('chk');
+    chk?.addEventListener('change', changeTheme);
 
-    chk.addEventListener('change',changeTheme);
+    // Initialize theme on page load
+    document.addEventListener('DOMContentLoaded', initializeTheme);
 } catch (err) {
-    
+    console.error('Error in theme switching:', err);
 }
 
 /*********************/
